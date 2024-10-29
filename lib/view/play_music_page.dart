@@ -82,15 +82,14 @@ class PlayMusicPage extends StatelessWidget {
                 children: [
                 IconButton(onPressed: () {}, icon: const Icon(Icons.shuffle)),
                 const Spacer(),
-                //todo ------------------> previous
+                  //todo ------------------> previous
                 IconButton(
                     icon: const Icon(Icons.skip_previous_rounded),
                     iconSize: 45,
                     onPressed: () async {
                       if(musicProviderTrue.currentMusicIndex > 0){
-                        musicProviderFalse.nextSongIndex(musicProviderTrue.currentMusicIndex - 1);
-                        // await player.setUrl(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
-                        musicProviderFalse.loadMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                        musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex - 1);
+                        musicProviderFalse.loadAndPlayMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
                       }
                     }),
                 //todo ------------------> play Or pause
@@ -100,7 +99,7 @@ class PlayMusicPage extends StatelessWidget {
                       : Icons.play_circle_fill),
                   iconSize: 75,
                   onPressed: (){
-                    musicProviderFalse.playPause(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                    musicProviderFalse.playPause();//song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url
                   },
                 ),
                 //todo ------------------> next
@@ -109,9 +108,8 @@ class PlayMusicPage extends StatelessWidget {
                     iconSize: 45,
                     onPressed: () async {
                       if(musicProviderTrue.currentMusicIndex < song.length-1){
-                        musicProviderFalse.nextSongIndex(musicProviderTrue.currentMusicIndex + 1);
-                        // await player.setAsset(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
-                        musicProviderFalse.loadMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                        musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex + 1);
+                        musicProviderFalse.loadAndPlayMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
                       }
                     }),
                 const Spacer(),

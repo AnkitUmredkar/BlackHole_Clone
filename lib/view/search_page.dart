@@ -84,7 +84,7 @@ class SearchPage extends StatelessWidget {
                                   final data = songModel.data.result[index];
                                   return ListTile(
                                     onTap: () async {
-                                      musicProviderFalse.nextSongIndex(index);
+                                      musicProviderFalse.setSongIndex(index);
                                       await player
                                           .setUrl(data.downloadUrl[4].url);
                                       Navigator.of(context).push(

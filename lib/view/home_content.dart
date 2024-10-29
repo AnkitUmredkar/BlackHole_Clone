@@ -9,6 +9,8 @@ import '../provider/music_provider.dart';
 import 'components/sliver_appbar_greading.dart';
 import 'components/sliver_appbar_search.dart';
 
+SongModel? songModel;
+
 class HomeContent extends StatelessWidget {
   final ScrollController scrollController;
   final double containerWidth;
@@ -27,6 +29,8 @@ class HomeContent extends StatelessWidget {
         Provider.of<HomeProvider>(context, listen: true);
     MusicProvider musicProviderFalse =
         Provider.of<MusicProvider>(context, listen: false);
+    MusicProvider musicProviderTrue =
+        Provider.of<MusicProvider>(context, listen: true);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Stack(
@@ -46,78 +50,151 @@ class HomeContent extends StatelessWidget {
             future: homeProviderFalse.fetchData(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                SongModel? songModel = snapshot.data;
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...List.generate(
-                        4,
-                        (index) {
-                          final data = songModel!.data.result[index];
-                          return ListTile(
-                            onTap: () async {
-                              musicProviderFalse.nextSongIndex(index);
-                              await player.setUrl(data.downloadUrl[4].url);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PlayMusicPage(songModel: songModel),
+                songModel = snapshot.data;
+                return Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...List.generate(
+                            4,
+                            (index) {
+                              final data = songModel!.data.result[index];
+                              return ListTile(
+                                onTap: () async {
+                                  musicProviderFalse.setSongIndex(index);
+                                  musicProviderFalse.loadAndPlayMusic(
+                                      data.downloadUrl[4].url);
+                                  musicProviderFalse.playPause();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PlayMusicPage(songModel: songModel!),
+                                    ),
+                                  );
+                                },
+                                trailing: const Icon(Icons.more_vert),
+                                leading: Container(
+                                  width: 56,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                              data.images[2].url))),
                                 ),
+                                title: Text(
+                                  data.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                subtitle: Text(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    data.album.name),
                               );
                             },
-                            trailing: const Icon(Icons.more_vert),
-                            leading: Container(
-                              width: 56,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(6),
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(data.images[2].url))),
-                            ),
-                            title: Text(
-                              data.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: Text(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                data.album.name),
-                          );
-                        },
-                      ),
-                      buildTitle(width, "Recommended Artist"),
-                      buildList(trends),
-                      const Gap(5),
-                      buildTitle(width, "New Released"),
-                      SizedBox(
-                        height: 180,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemCount: newRelease.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, top: 8.0, bottom: 8.0),
-                            child: Container(
-                              width: 170,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(newRelease[index]),
-                                      fit: BoxFit.cover),
-                                  color: Colors.grey.shade800,
-                                  borderRadius: BorderRadius.circular(20)),
+                          ),
+                          buildTitle(width, "Recommended Artist"),
+                          buildList(trends),
+                          const Gap(5),
+                          buildTitle(width, "New Released"),
+                          SizedBox(
+                            height: 180,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemCount: newRelease.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, top: 8.0, bottom: 8.0),
+                                child: Container(
+                                  width: 170,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(newRelease[index]),
+                                          fit: BoxFit.cover),
+                                      color: Colors.grey.shade800,
+                                      borderRadius: BorderRadius.circular(20)),
+                                ),
+                              ),
                             ),
                           ),
+                          const Gap(5),
+                          buildTitle(width, "Radio Station"),
+                          buildList(radio),
+                        ],
+                      ),
+                    ),
+                    //todo ---------------------------------> mini player
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: width,
+                        height: height * 0.086,
+                        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 18),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          // color: Colors.blue,
+                          gradient: LinearGradient(colors: homeProviderTrue.isDarkMode
+                              ? [Colors.grey.shade900, Colors.black]
+                              : [const Color(0xfff5f9ff), Colors.white],)
+                        ),
+                        child: Row(
+                          children: [
+                            //todo -----------> img
+                            Container(
+                              width: 47,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.5),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                        songModel!.data.result[musicProviderTrue.currentMusicIndex].images[2].url))
+                              ),
+                            ),
+                            //todo -----------> spng name
+                            const Gap(11),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: width * 0.305,child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,songModel!.data.result[musicProviderTrue.currentMusicIndex].name)),
+                                const Gap(2),
+                                SizedBox(width: width * 0.305,child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,songModel!.data.result[musicProviderTrue.currentMusicIndex].album.name,style: TextStyle(color: homeProviderTrue.isDarkMode ? Colors.white70 : Colors.grey.shade700),)),
+                              ],
+                            ),
+                            const Spacer(),
+                            Row(
+                              children: [
+                                //todo ------------------> previous
+                                IconButton(onPressed: () {
+                                  if(musicProviderTrue.currentMusicIndex > 0){
+                                    musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex - 1);
+                                    musicProviderFalse.loadAndPlayMusic(songModel!.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                                  }
+                                }, icon: const Icon(Icons.skip_previous_rounded)),
+                                IconButton(onPressed: () {
+                                  musicProviderFalse.playPause();
+                                  musicProviderFalse.loadAndPlayMusic(songModel!.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                                }, icon: Icon(musicProviderTrue.isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow_rounded,)),
+                                //todo --------------------> next song
+                                IconButton(onPressed: () {
+                                  if(musicProviderTrue.currentMusicIndex < songModel!.data.result.length-1){
+                                    musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex + 1);
+                                    musicProviderFalse.loadAndPlayMusic(songModel!.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                                  }
+                                }, icon: Icon(Icons.skip_next_rounded))
+                              ],
+                            )
+                          ],
                         ),
                       ),
-                      const Gap(5),
-                      buildTitle(width, "Radio Station"),
-                      buildList(radio),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               } else if (snapshot.hasError) {
                 return Center(
