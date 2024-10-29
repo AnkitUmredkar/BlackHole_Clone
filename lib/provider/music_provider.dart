@@ -3,7 +3,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_player_app/utils/global.dart';
 import 'package:music_player_app/view/home_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../model/song_model.dart';
 import '../service/api_service.dart';
 
@@ -107,5 +106,8 @@ class MusicProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadMusic() async {
+    await player.setUrl(miniPlayerModel!.data.result[currentMusicIndex].downloadUrl[4].url);
+  }
 
 }

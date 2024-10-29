@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player_app/view/play_music_page.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../model/song_model.dart';
 import '../provider/home_provider.dart';
@@ -20,7 +21,8 @@ class SearchPage extends StatelessWidget {
         Provider.of<MusicProvider>(context, listen: true);
     HomeProvider homeProviderTrue =
         Provider.of<HomeProvider>(context, listen: true);
-    double width = MediaQuery.of(context).size.width;
+    HomeProvider homeProviderFalse =
+    Provider.of<HomeProvider>(context, listen: false);
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -68,8 +70,7 @@ class SearchPage extends StatelessWidget {
                   ),
                 ),
                 FutureBuilder(
-                  future:
-                      musicProviderFalse.fetchData(musicProviderTrue.search),
+                  future: musicProviderFalse.fetchData(musicProviderTrue.search),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       SongModel? songModel = snapshot.data;
@@ -84,15 +85,11 @@ class SearchPage extends StatelessWidget {
                                   final data = songModel.data.result[index];
                                   return ListTile(
                                     onTap: () async {
+                                      homeProviderFalse.updateMiniPlayer(songModel);
                                       musicProviderFalse.setSongIndex(index);
-                                      await player
-                                          .setUrl(data.downloadUrl[4].url);
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => PlayMusicPage(
-                                              songModel: songModel),
-                                        ),
-                                      );
+                                      musicProviderFalse.loadAndPlayMusic(data.downloadUrl[4].url);
+                                      musicProviderFalse.playPause();
+                                      Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: PlayMusicPage(songModel: songModel)));
                                     },
                                     trailing: const Icon(Icons.more_vert),
                                     leading: Container(
@@ -129,7 +126,7 @@ class SearchPage extends StatelessWidget {
                     } else {
                       return Padding(
                           padding: EdgeInsets.only(top: height * 0.1),
-                          child: CircularProgressIndicator(
+                          child: const CircularProgressIndicator(
                             color: Colors.teal,
                           ));
                     }

@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/song_model.dart';
 import '../service/api_service.dart';
+import '../view/home_content.dart';
 
 class HomeProvider extends ChangeNotifier{
 
@@ -28,6 +29,7 @@ class HomeProvider extends ChangeNotifier{
 
   void changeTheme(){
     isDarkMode = !isDarkMode;
+    storeLastMusicIndex(isDarkMode);
     notifyListeners();
   }
 
@@ -43,4 +45,8 @@ class HomeProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void updateMiniPlayer(SongModel songModel){
+    miniPlayerModel = songModel;
+    notifyListeners();
+  }
 }
