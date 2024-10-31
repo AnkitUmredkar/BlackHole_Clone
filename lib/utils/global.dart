@@ -3,13 +3,14 @@ import 'package:just_audio/just_audio.dart';
 
 BoxDecoration backgroundGradient(bool isDarkMode) {
   return BoxDecoration(
-      gradient: LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: isDarkMode
-        ? [Colors.grey.shade900, Colors.black]
-        : [const Color(0xfff5f9ff), Colors.white],
-  ));
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDarkMode
+          ? [Colors.grey.shade900, Colors.black]
+          : [const Color(0xfff5f9ff), Colors.white],
+    ),
+  );
 }
 
 final player = AudioPlayer();
@@ -157,7 +158,6 @@ List radio = [
 //     "artist": "B Praak, Sachet Tandon",
 //   },
 // ];
-
 
 // List<Map<String, dynamic>> songList = [
 //   {

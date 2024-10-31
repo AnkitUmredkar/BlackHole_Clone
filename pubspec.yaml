@@ -78,6 +78,7 @@ flutter:
     - assets/images/trending/
     - assets/images/new_release/
     - assets/images/radio/
+    - assets/images/splash_screen/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

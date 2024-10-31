@@ -8,7 +8,7 @@ import '../view/home_content.dart';
 class HomeProvider extends ChangeNotifier{
 
   int selectedPage = 0;
-  bool isDarkMode = true;
+  bool isDarkMode = true,isLogin = false;
   late SongModel mapData;
   late SharedPreferences sharedPreferences;
 
@@ -20,6 +20,7 @@ class HomeProvider extends ChangeNotifier{
 
   HomeProvider(){
     getLastMusicIndex();
+    getLoginStatus();
   }
 
   void setPage(int index){
@@ -41,12 +42,24 @@ class HomeProvider extends ChangeNotifier{
 
   Future<void> getLastMusicIndex() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    isDarkMode = sharedPreferences.getBool("theme") ?? false;
+    isDarkMode = sharedPreferences.getBool("theme") ?? true;
     notifyListeners();
   }
 
   void updateMiniPlayer(SongModel songModel){
     miniPlayerModel = songModel;
+    notifyListeners();
+  }
+
+  Future<void> setLoginOrNot(bool isLogin) async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setBool("isLogin", isLogin);
+  }
+
+  Future<void> getLoginStatus() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    isLogin = sharedPreferences.getBool("isLogin") ?? false;
+    print("User Login Status -----> $isLogin");
     notifyListeners();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:music_player_app/provider/home_provider.dart';
 import 'package:music_player_app/provider/music_provider.dart';
 import 'package:music_player_app/view/home_page.dart';
+import 'package:music_player_app/view/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -28,9 +29,8 @@ class MyApp extends StatelessWidget {
             ? ThemeMode.dark
             : ThemeMode.light,
         darkTheme: ThemeData.dark(),
-        // Define your dark theme here
         theme: ThemeData.light(),
-        home: const HomePage(),
+        home: const SplashScreen(),
       ),
     );
   }

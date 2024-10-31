@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_player_app/view/components/my_text_field.dart';
 import 'package:music_player_app/view/play_music_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +8,6 @@ import '../provider/home_provider.dart';
 import '../provider/music_provider.dart';
 import '../utils/global.dart';
 
-TextEditingController _txtSearch = TextEditingController();
-FocusNode _focusNode = FocusNode();
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -49,25 +48,26 @@ class SearchPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: TextField(
-                    cursorColor: Colors.teal,
-                    controller: _txtSearch,
-                    onChanged: (value) => (value != "")
-                        ? musicProviderFalse.searchSong(value)
-                        : musicProviderFalse.searchSong("arijit"),
-                    focusNode: _focusNode,
-                    decoration: InputDecoration(
-                        prefixIcon: IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                        fillColor: homeProviderTrue.isDarkMode
-                            ? Colors.grey[900]
-                            : const Color(0xfff5f9ff),
-                        filled: true,
-                        border: InputBorder.none,
-                        hintText: "Songs, albums or artists"),
-                  ),
+                  child: const MyTextField(),
+                  // TextField(
+                  //   cursorColor: Colors.teal,
+                  //   controller: _txtSearch,
+                  //   onChanged: (value) => (value != "")
+                  //       ? musicProviderFalse.searchSong(value)
+                  //       : musicProviderFalse.searchSong("arijit"),
+                  //   focusNode: _focusNode,
+                  //   decoration: InputDecoration(
+                  //       prefixIcon: IconButton(
+                  //         onPressed: () => Navigator.of(context).pop(),
+                  //         icon: const Icon(Icons.arrow_back),
+                  //       ),
+                  //       fillColor: homeProviderTrue.isDarkMode
+                  //           ? Colors.grey[900]
+                  //           : const Color(0xfff5f9ff),
+                  //       filled: true,
+                  //       border: InputBorder.none,
+                  //       hintText: "Songs, albums or artists"),
+                  // ),
                 ),
                 FutureBuilder(
                   future: musicProviderFalse.fetchData(musicProviderTrue.search),
