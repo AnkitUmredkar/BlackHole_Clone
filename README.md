@@ -16,9 +16,6 @@
 ### 📱 Interactive UI
 - Dive into a user-friendly interface designed to make browsing, exploring, and discovering music easy and enjoyable.
 
-### 🎚️ Mini Player Control
-- Keep your music close at hand with the mini player, allowing you to control playback while you explore other parts of the app.
-
 ### ❤️ Like Songs
 - Build your own collection of favorites with a simple tap to save songs you love and want to hear again.
 
