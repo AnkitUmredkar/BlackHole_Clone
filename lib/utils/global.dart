@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:just_audio/just_audio.dart';
 
 BoxDecoration backgroundGradient(bool isDarkMode) {
@@ -15,14 +16,48 @@ BoxDecoration backgroundGradient(bool isDarkMode) {
 
 final player = AudioPlayer();
 
-List trends = [
-  "assets/images/trending/arijit.jpeg",
-  "assets/images/trending/ARrehman.jpeg",
-  "assets/images/trending/jubin.jpeg",
-  "assets/images/trending/siddhu.jpeg",
-  "assets/images/trending/subh.jpeg",
-  "assets/images/trending/trend.jpg",
-  "assets/images/trending/trending.jpg",
+Padding customHomePageTitle(double width, String title) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(10, 12, 10, 5),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: width * 0.048,
+              color: Colors.tealAccent),
+        ),
+        const Icon(Icons.arrow_forward_ios)
+      ],
+    ),
+  );
+}
+
+Row musicPageHeader(BuildContext context) {
+  return Row(
+    children: [
+      IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.keyboard_arrow_down)),
+      const Spacer(),
+      IconButton(
+          onPressed: () {}, icon: const Icon(Icons.my_library_music_sharp)),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+    ],
+  );
+}
+
+
+List artist = [
+  "assets/images/artist/arijit.jpeg",
+  "assets/images/artist/ARrehman.jpeg",
+  "assets/images/artist/jubin.jpeg",
+  "assets/images/artist/siddhu.jpeg",
+  "assets/images/artist/subh.jpeg",
+  "assets/images/artist/lata_mangeshkar.jpg",
 ];
 
 List newRelease = [
@@ -41,6 +76,18 @@ List radio = [
   "assets/images/radio/radio4.png",
   "assets/images/radio/radio5.jpeg",
 ];
+
+Future<bool?> showToast(String msg) {
+  return Fluttertoast.showToast(
+    msg: msg,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 2,
+    backgroundColor: Colors.black,
+    textColor: Colors.white,
+    fontSize: 16,
+  );
+}
 
 // List<Map<String, dynamic>> songList = [
 //   {

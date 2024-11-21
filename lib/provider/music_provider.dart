@@ -5,14 +5,18 @@ import 'package:music_player_app/view/home_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/song_model.dart';
 import '../service/api_service.dart';
+import '../view/play_music_page.dart';
 
 class MusicProvider extends ChangeNotifier {
   bool isPlaying = false, isComplete = false;
   Duration currentPosition = Duration.zero;
   Duration totalDuration = Duration.zero;
   int currentMusicIndex = 0;
-  String search = "arijit";
+  String search = "Jass Manak";
   late SharedPreferences sharedPreferences;
+  List<String> likedSongList = [];
+
+  List likeList = List.generate(10, (index) => false);
 
   late SongModel mapData;
 
@@ -28,6 +32,7 @@ class MusicProvider extends ChangeNotifier {
   }
 
   MusicProvider() {
+    getFavoritesSong();
     getLastMusicIndex();
     player.durationStream.listen((duration) {
       if (duration != null) {
@@ -47,7 +52,8 @@ class MusicProvider extends ChangeNotifier {
         if (currentMusicIndex < songModel!.data.result.length - 1) {
           currentMusicIndex = currentMusicIndex + 1;
           setSongIndex(currentMusicIndex);
-          loadAndPlayMusic(songModel!.data.result[currentMusicIndex].downloadUrl[4].url);
+          loadAndPlayMusic(playSongModel.data.result[currentMusicIndex].downloadUrl[4].url);
+          checkSongLikedOrNot(playSongModel);
           notifyListeners();
         }
       }
@@ -63,11 +69,6 @@ class MusicProvider extends ChangeNotifier {
 
   Future<void> playPause() async {
     isPlaying = !isPlaying;
-    //
-    // if(isComplete){
-    //   loadAndPlayMusic(url);//this url comes from parameter
-    //   isComplete = false;
-    // }
     if (isPlaying) {
       player.play();
     } else {
@@ -107,7 +108,57 @@ class MusicProvider extends ChangeNotifier {
   }
 
   Future<void> loadMusic() async {
-    await player.setUrl(miniPlayerModel!.data.result[currentMusicIndex].downloadUrl[4].url);
+    await player.setUrl(playSongModel.data.result[currentMusicIndex].downloadUrl[4].url);
   }
 
+  //todo ---------------------> like song
+  Future<void> toggleLike(SongModel song) async {
+    likeList[currentMusicIndex] = !likeList[currentMusicIndex];
+    final data = song.data.result[currentMusicIndex];
+    sharedPreferences = await SharedPreferences.getInstance();
+    String formatedData = "${data.downloadUrl[4].url} _ ${data.name} _ ${data.album.name} _ ${data.images[2].url}";
+
+    if(likeList[currentMusicIndex]){
+      likedSongList.add(formatedData);
+      print(likedSongList);
+      sharedPreferences.setStringList("likedSong", likedSongList);
+      showToast("Added to favorites");
+    }
+    else{
+      likedSongList.removeWhere((element) => element == formatedData);
+      print(likedSongList);
+      sharedPreferences.setStringList("likedSong", likedSongList);
+      showToast("Removed from favorites");
+    }
+    notifyListeners();
+  }
+
+  Future<void> removeFromLikedSong(int index) async {
+    likedSongList.removeAt(index);
+    sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setStringList("likedSong", likedSongList);
+    notifyListeners();
+  }
+
+  Future<void> getFavoritesSong() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    likedSongList = sharedPreferences.getStringList("likedSong") ?? [];
+    print(likedSongList);
+    notifyListeners();
+  }
+
+  Future<void> checkSongLikedOrNot(SongModel song) async {
+    final data = song.data.result[currentMusicIndex];
+    sharedPreferences = await SharedPreferences.getInstance();
+    String formatedData = "${data.downloadUrl[4].url} _ ${data.name} _ ${data.album.name} _ ${data.images[2].url}";
+
+    if(likedSongList.contains(formatedData)){
+      likeList[currentMusicIndex] = true;
+    }
+    else{
+      likeList[currentMusicIndex] = false;
+    }
+    notifyListeners();
+
+  }
 }

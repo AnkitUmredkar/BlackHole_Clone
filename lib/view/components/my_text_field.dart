@@ -19,6 +19,7 @@ class MyTextField extends StatelessWidget {
     return TextField(
       cursorColor: Colors.teal,
       controller: _txtSearch,
+      textAlignVertical: TextAlignVertical.center,
       onChanged: (value) => (value != "")
           ? musicProviderFalse.searchSong(value)
           : musicProviderFalse.searchSong("arijit"),

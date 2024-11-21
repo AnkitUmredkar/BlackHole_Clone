@@ -71,11 +71,11 @@ class OnBoardingPage extends StatelessWidget {
 Row buildRow(double width,String qu,String ans) {
   return Row(
     children: [
-      Container(
+      SizedBox(
         width: 120,
         child: Text(
           qu,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             height: 1.15,
           ),
@@ -90,7 +90,7 @@ Row buildRow(double width,String qu,String ans) {
             borderRadius: BorderRadius.circular(10),
             color: Colors.grey.shade800
         ),
-        child: Text(ans,style: TextStyle(color: Colors.white),),
+        child: Text(ans,style: const TextStyle(color: Colors.white),),
       )
     ],
   );

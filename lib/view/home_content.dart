@@ -11,11 +11,11 @@ import '../provider/music_provider.dart';
 import 'components/sliver_appbar_greading.dart';
 import 'components/sliver_appbar_search.dart';
 
-SongModel? songModel,miniPlayerModel;
-bool firstTimeOnly = true;
+SongModel? songModel;
+bool firstTimeOnly = true,check = true;
 
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   final ScrollController scrollController;
   final double containerWidth;
 
@@ -25,40 +25,47 @@ class HomeContent extends StatelessWidget {
       required this.containerWidth});
 
   @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  @override
+  void initState() {
+    super.initState();
+      Provider.of<HomeProvider>(context, listen: false).fetchAllArtistSong();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    HomeProvider homeProviderFalse =
-        Provider.of<HomeProvider>(context, listen: false);
-    HomeProvider homeProviderTrue =
-        Provider.of<HomeProvider>(context, listen: true);
-    MusicProvider musicProviderFalse =
-        Provider.of<MusicProvider>(context, listen: false);
-    MusicProvider musicProviderTrue =
-        Provider.of<MusicProvider>(context, listen: true);
+    HomeProvider homeProviderFalse = Provider.of<HomeProvider>(context, listen: false);
+    HomeProvider homeProviderTrue = Provider.of<HomeProvider>(context, listen: true);
+    MusicProvider musicProviderFalse = Provider.of<MusicProvider>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Stack(
       children: [
         NestedScrollView(
-          controller: scrollController,
+          controller: widget.scrollController,
           physics: const BouncingScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               const SliverForAppBar(),
               SliverForSearch(
-                  scrollController: scrollController,
-                  containerWidth: containerWidth),
+                  scrollController: widget.scrollController,
+                  containerWidth: widget.containerWidth),
             ];
           },
           body: FutureBuilder(
-            future: homeProviderFalse.fetchData(),
+            future: homeProviderFalse.fetchData("Hindi"),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 songModel = snapshot.data;
-                if(firstTimeOnly){
-                  homeProviderFalse.updateMiniPlayer(songModel!);
-                  musicProviderFalse.loadMusic();
+                if (firstTimeOnly) {
+                    // homeProviderFalse.updateMiniPlayer(songModel!);
+                    playSongModel = songModel!;
+                    musicProviderFalse.loadMusic();
+                  firstTimeOnly = false;
                 }
-                firstTimeOnly = false;
                 return Stack(
                   children: [
                     //todo -------------------------------------> body
@@ -67,6 +74,7 @@ class HomeContent extends StatelessWidget {
                         builder: (BuildContext context, value, Widget? child) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            //todo -------------------------------------> song list
                             ...List.generate(
                               4,
                               (index) {
@@ -74,21 +82,23 @@ class HomeContent extends StatelessWidget {
                                 return ListTile(
                                   onTap: () async {
                                     homeProviderFalse.updateMiniPlayer(songModel!);
-                                    musicProviderFalse.setSongIndex(index);
-                                    musicProviderFalse.loadAndPlayMusic(data.downloadUrl[4].url);
-                                    musicProviderFalse.playPause();
-                                    Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: PlayMusicPage(songModel: songModel!)));
+                                    if(check) musicProviderFalse.playPause();
+                                    check = false;
+                                    musicProviderFalse
+                                      ..setSongIndex(index)
+                                      ..loadAndPlayMusic(data.downloadUrl[4].url);
                                   },
                                   trailing: const Icon(Icons.more_vert),
                                   leading: Container(
                                     width: 56,
                                     height: 60,
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: NetworkImage(
-                                                data.images[2].url))),
+                                      borderRadius: BorderRadius.circular(6),
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(data.images[2].url),
+                                      ),
+                                    ),
                                   ),
                                   title: Text(
                                     data.name,
@@ -102,10 +112,49 @@ class HomeContent extends StatelessWidget {
                                 );
                               },
                             ),
-                            buildTitle(width, "Recommended Artist"),
-                            buildList(trends),
+                            //todo -------------------------------------> Artist wise song list
+                            customHomePageTitle(width, "Recommended Artist"),
+                            SizedBox(
+                              height: 180,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: artist.length,
+                                itemBuilder: (context, index) => Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, top: 8.0, bottom: 8.0),
+                                  child: Container(
+                                    width: 170,
+                                    alignment: Alignment.center,
+                                    child: (homeProviderTrue.artistObjectsList[index] == 0)
+                                        ? const CircularProgressIndicator(color: Colors.tealAccent)
+                                        : GestureDetector(
+                                            onTap: () {
+                                              SongModel temp = homeProviderTrue.artistObjectsList[index];
+                                              playSongModel = temp;
+                                              musicProviderFalse
+                                                ..setSongIndex(0)
+                                                ..loadAndPlayMusic(playSongModel.data.result[0].downloadUrl[4].url)
+                                                ..checkSongLikedOrNot(playSongModel);
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PlayMusicPage()));
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        artist[index]),
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ),
                             const Gap(5),
-                            buildTitle(width, "New Released"),
+                            //todo -------------------------------------> New released song
+                            customHomePageTitle(width, "New Released"),
                             SizedBox(
                               height: 180,
                               child: ListView.builder(
@@ -128,8 +177,10 @@ class HomeContent extends StatelessWidget {
                               ),
                             ),
                             const Gap(5),
-                            buildTitle(width, "Radio Station"),
-                            buildList(radio),
+                            //todo -------------------------------------> Radio station
+                            customHomePageTitle(width, "Radio Station"),
+                            buildSongList(radio),
+                            Gap(height * 0.088),
                           ],
                         ),
                       ),
@@ -137,7 +188,8 @@ class HomeContent extends StatelessWidget {
                     //todo -------------------------------------> mini player
                     GestureDetector(
                       onTap: (){
-                        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: PlayMusicPage(songModel: miniPlayerModel!)));
+                        musicProviderFalse.checkSongLikedOrNot(songModel!);
+                        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const PlayMusicPage()));
                       },
                       child: const Align(
                         alignment: Alignment.bottomCenter,
@@ -150,13 +202,14 @@ class HomeContent extends StatelessWidget {
                 return Center(
                   child: Text(snapshot.error.toString()),
                 );
-              } else {
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(
                     color: Colors.teal,
                   ),
                 );
               }
+              return const Center(child: Text("No data available"));
             },
           ),
         ),
@@ -190,7 +243,7 @@ class HomeContent extends StatelessWidget {
     );
   }
 
-  SizedBox buildList(List list) {
+  SizedBox buildSongList(List list) {
     return SizedBox(
       height: 180,
       child: ListView.builder(
@@ -199,35 +252,18 @@ class HomeContent extends StatelessWidget {
         itemCount: list.length,
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
-          child: Container(
-            width: 170,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(list[index]), fit: BoxFit.cover),
-              shape: BoxShape.circle,
-              color: Colors.grey.shade800,
+          child: GestureDetector(
+            child: Container(
+              width: 170,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage(list[index]), fit: BoxFit.cover),
+                shape: BoxShape.circle,
+                color: Colors.grey.shade800,
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Padding buildTitle(double width, String title) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 12, 10, 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: width * 0.048,
-                color: Colors.tealAccent),
-          ),
-          const Icon(Icons.arrow_forward_ios)
-        ],
       ),
     );
   }

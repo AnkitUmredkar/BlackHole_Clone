@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/home_provider.dart';
+import '../favorite_songs_page.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -88,8 +89,10 @@ class MyDrawer extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.folder),
-                  title: const Text('My Music'),
-                  onTap: () {},
+                  title: const Text('Favorites'),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FavoriteSongsPage(),));
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.download_done_sharp),

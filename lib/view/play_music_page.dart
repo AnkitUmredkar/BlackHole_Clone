@@ -4,11 +4,13 @@ import 'package:music_player_app/model/song_model.dart';
 import 'package:music_player_app/provider/home_provider.dart';
 import 'package:music_player_app/provider/music_provider.dart';
 import 'package:provider/provider.dart';
+import '../utils/global.dart';
+
+late SongModel playSongModel;
 
 class PlayMusicPage extends StatelessWidget {
-  final SongModel songModel;
 
-  const PlayMusicPage({super.key, required this.songModel});
+  const PlayMusicPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +22,13 @@ class PlayMusicPage extends StatelessWidget {
         Provider.of<HomeProvider>(context, listen: true);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    final song = songModel.data.result;
+    final song = playSongModel.data.result;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
-            header(context),
+            musicPageHeader(context),
             //todo --------------------> image
             Container(
               height: height * 0.36,
@@ -49,7 +51,7 @@ class PlayMusicPage extends StatelessWidget {
               ),
             ),
             Text(song[musicProviderTrue.currentMusicIndex].album.name),
-            Gap(height * 0.058),
+            Gap(height * 0.051),
             //todo --------------------> slider
             SliderTheme(
               data: const SliderThemeData(
@@ -88,8 +90,10 @@ class PlayMusicPage extends StatelessWidget {
                     iconSize: 45,
                     onPressed: () async {
                       if(musicProviderTrue.currentMusicIndex > 0){
-                        musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex - 1);
-                        musicProviderFalse.loadAndPlayMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                        musicProviderFalse
+                          ..setSongIndex(musicProviderTrue.currentMusicIndex - 1)
+                          ..loadAndPlayMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url)
+                          ..checkSongLikedOrNot(playSongModel);
                       }
                     }),
                 //todo ------------------> play Or pause
@@ -108,28 +112,32 @@ class PlayMusicPage extends StatelessWidget {
                     iconSize: 45,
                     onPressed: () async {
                       if(musicProviderTrue.currentMusicIndex < song.length-1){
-                        musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex + 1);
-                        musicProviderFalse.loadAndPlayMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                        musicProviderFalse
+                          ..setSongIndex(musicProviderTrue.currentMusicIndex + 1)
+                          ..loadAndPlayMusic(song[musicProviderTrue.currentMusicIndex].downloadUrl[4].url)
+                          ..checkSongLikedOrNot(playSongModel);
                       }
                     }),
                 const Spacer(),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.repeat)),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.favorite_outline_rounded),
-                  Icon(Icons.download)
-                ],
-              ),
+            //todo ------------------> like and download
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  color: musicProviderTrue.likeList[musicProviderTrue.currentMusicIndex] ? Colors.red : Colors.grey,
+                  onPressed: () => musicProviderFalse.toggleLike(playSongModel),
+                  icon: musicProviderTrue.likeList[musicProviderTrue.currentMusicIndex] ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+                ),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.download))
+              ],
             ),
             Container(
               height: 4,
               width: 27,
-              margin: EdgeInsets.only(top: height * 0.026,bottom: 6),
+              margin: EdgeInsets.only(top: height * 0.01,bottom: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10)
@@ -141,19 +149,4 @@ class PlayMusicPage extends StatelessWidget {
       ),
     );
   }
-}
-
-Row header(BuildContext context) {
-  return Row(
-    children: [
-      IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.keyboard_arrow_down)),
-      const Spacer(),
-      IconButton(
-          onPressed: () {}, icon: const Icon(Icons.my_library_music_sharp)),
-      IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
-      IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
-    ],
-  );
 }

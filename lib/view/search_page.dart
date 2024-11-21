@@ -20,8 +20,6 @@ class SearchPage extends StatelessWidget {
         Provider.of<MusicProvider>(context, listen: true);
     HomeProvider homeProviderTrue =
         Provider.of<HomeProvider>(context, listen: true);
-    HomeProvider homeProviderFalse =
-    Provider.of<HomeProvider>(context, listen: false);
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -85,11 +83,14 @@ class SearchPage extends StatelessWidget {
                                   final data = songModel.data.result[index];
                                   return ListTile(
                                     onTap: () async {
-                                      homeProviderFalse.updateMiniPlayer(songModel);
-                                      musicProviderFalse.setSongIndex(index);
-                                      musicProviderFalse.loadAndPlayMusic(data.downloadUrl[4].url);
-                                      musicProviderFalse.playPause();
-                                      Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: PlayMusicPage(songModel: songModel)));
+                                      // homeProviderFalse.updateMiniPlayer(songModel);
+                                      playSongModel = songModel;
+                                      musicProviderFalse
+                                        ..setSongIndex(index)
+                                        ..loadAndPlayMusic(data.downloadUrl[4].url)
+                                        ..playPause()
+                                        ..checkSongLikedOrNot(songModel);
+                                      Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: const PlayMusicPage()));
                                     },
                                     trailing: const Icon(Icons.more_vert),
                                     leading: Container(

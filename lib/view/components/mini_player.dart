@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:music_player_app/view/play_music_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/home_provider.dart';
 import '../../provider/music_provider.dart';
-import '../home_content.dart';
 
 class MiniPlayer extends StatelessWidget {
   const MiniPlayer({super.key});
@@ -39,7 +39,7 @@ class MiniPlayer extends StatelessWidget {
                 image: DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage(
-                        miniPlayerModel!.data.result[musicProviderTrue.currentMusicIndex].images[2].url))
+                        playSongModel.data.result[musicProviderTrue.currentMusicIndex].images[2].url))
             ),
           ),
           //todo ------------------------> song name
@@ -47,9 +47,9 @@ class MiniPlayer extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(width: width * 0.305,child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,miniPlayerModel!.data.result[musicProviderTrue.currentMusicIndex].name)),
+              SizedBox(width: width * 0.305,child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,playSongModel.data.result[musicProviderTrue.currentMusicIndex].name)),
               const Gap(2),
-              SizedBox(width: width * 0.305,child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,miniPlayerModel!.data.result[musicProviderTrue.currentMusicIndex].album.name,style: TextStyle(color: homeProviderTrue.isDarkMode ? Colors.white70 : Colors.grey.shade700),)),
+              SizedBox(width: width * 0.305,child: Text(overflow: TextOverflow.ellipsis,maxLines: 1,playSongModel.data.result[musicProviderTrue.currentMusicIndex].album.name,style: TextStyle(color: homeProviderTrue.isDarkMode ? Colors.white70 : Colors.grey.shade700),)),
             ],
           ),
           const Spacer(),
@@ -60,7 +60,7 @@ class MiniPlayer extends StatelessWidget {
               IconButton(onPressed: () {
                 if(musicProviderTrue.currentMusicIndex > 0){
                   musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex - 1);
-                  musicProviderFalse.loadAndPlayMusic(miniPlayerModel!.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                  musicProviderFalse.loadAndPlayMusic(playSongModel.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
                 }
               }, icon: const Icon(Icons.skip_previous_rounded)),
               //todo ------------------------> playOrPause
@@ -72,9 +72,9 @@ class MiniPlayer extends StatelessWidget {
                   : Icons.play_arrow_rounded,)),
               //todo --------------------> next song
               IconButton(onPressed: () {
-                if(musicProviderTrue.currentMusicIndex < miniPlayerModel!.data.result.length-1){
+                if(musicProviderTrue.currentMusicIndex < playSongModel.data.result.length-1){
                   musicProviderFalse.setSongIndex(musicProviderTrue.currentMusicIndex + 1);
-                  musicProviderFalse.loadAndPlayMusic(miniPlayerModel!.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
+                  musicProviderFalse.loadAndPlayMusic(playSongModel.data.result[musicProviderTrue.currentMusicIndex].downloadUrl[4].url);
                 }
               }, icon: const Icon(Icons.skip_next_rounded))
             ],
