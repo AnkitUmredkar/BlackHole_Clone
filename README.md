@@ -10,6 +10,9 @@
 ### 🔍 Search Song 🎶
 - Quickly find any song you’re in the mood for with a powerful search that scans a vast library for the latest hits and timeless classics.
 
+### 🎛️ Mini Player 
+- Keep the music flowing with a compact and convenient mini player, allowing you to control playback while browsing other sections of the app.
+
 ### ✨ Smooth Animations
 - Enjoy an immersive experience with fluid animations and sleek transitions that enhance every interaction within the app.
 
