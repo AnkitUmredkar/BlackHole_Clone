@@ -75,7 +75,6 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/drawer/
-    - assets/images/song_images/
     - assets/images/artist/
     - assets/images/new_release/
     - assets/images/radio/
