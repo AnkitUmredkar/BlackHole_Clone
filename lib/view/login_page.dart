@@ -49,6 +49,7 @@ class LoginPage extends StatelessWidget {
               ),
               Gap(height * 0.11),
               TextField(
+                controller: txtName,
                 cursorColor: Colors.tealAccent,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(

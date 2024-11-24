@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_player_app/view/login_page.dart';
 
 class SliverForAppBar extends StatelessWidget {
    const SliverForAppBar({super.key});
@@ -34,7 +35,7 @@ class SliverForAppBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Ankit',
+                    txtName.text != "" ? txtName.text : "User",
                     style: GoogleFonts.roboto(
                       fontSize: 18.5,
                       letterSpacing: 1.8,
