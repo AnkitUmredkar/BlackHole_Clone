@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_player_app/view/login_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/home_provider.dart';
@@ -10,134 +11,157 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HomeProvider homeProviderTrue = Provider.of<HomeProvider>(context,listen: true);
+    HomeProvider homeProviderFalse =
+        Provider.of<HomeProvider>(context, listen: false);
+    HomeProvider homeProviderTrue =
+        Provider.of<HomeProvider>(context, listen: true);
     return Drawer(
-        backgroundColor: homeProviderTrue.isDarkMode ? Colors.black : Colors.white,
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            centerTitle: true,
-            backgroundColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            stretch: true,
-            elevation: 0,
-            expandedHeight: MediaQuery.of(context).size.height * 0.2,
-            flexibleSpace: FlexibleSpaceBar(
+        backgroundColor:
+            homeProviderTrue.isDarkMode ? Colors.black : Colors.white,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
               centerTitle: true,
-              title: RichText(
-                text:  TextSpan(
-                  text: 'MusicHole\n',
-                  style: const TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'version 2.0',
-                      style: GoogleFonts.roboto(
-                        fontSize: 7.0,
-                      ),
+              backgroundColor: Colors.transparent,
+              automaticallyImplyLeading: false,
+              stretch: true,
+              elevation: 0,
+              expandedHeight: MediaQuery.of(context).size.height * 0.2,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: RichText(
+                  text: TextSpan(
+                    text: 'MusicHole\n',
+                    style: const TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.w600,
                     ),
-                  ],
-                ),
-                textAlign: TextAlign.end,
-              ),
-              titlePadding: const EdgeInsets.only(bottom: 40.0),
-              background: ShaderMask(
-                shaderCallback: (rect) {
-                  return LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.8),
-                      Colors.black.withOpacity(0.1),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'version 2.0',
+                        style: GoogleFonts.roboto(
+                          fontSize: 7.0,
+                        ),
+                      ),
                     ],
-                  ).createShader(
-                    Rect.fromLTRB(0, 0, rect.width, rect.height),
-                  );
-                },
-                blendMode: BlendMode.dstIn,
-                child: Image(
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                  image: AssetImage(
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+                titlePadding: const EdgeInsets.only(bottom: 40.0),
+                background: ShaderMask(
+                  shaderCallback: (rect) {
+                    return LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.8),
+                        Colors.black.withOpacity(0.1),
+                      ],
+                    ).createShader(
+                      Rect.fromLTRB(0, 0, rect.width, rect.height),
+                    );
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: Image(
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                    image: AssetImage(
                       homeProviderTrue.isDarkMode
-                        ? 'assets/images/drawer/header-dark.jpg'
-                        : 'assets/images/drawer/header-light.jpg',
+                          ? 'assets/images/drawer/header-dark.jpg'
+                          : 'assets/images/drawer/header-light.jpg',
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                ListTile(
-                  leading: const Icon(
-                    Icons.home,
-                    color: Colors.teal,
-                  ),
-                  title: const Text(
-                    'Home',
-                    style: TextStyle(
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  ListTile(
+                    leading: const Icon(
+                      Icons.home,
                       color: Colors.teal,
                     ),
+                    title: const Text(
+                      'Home',
+                      style: TextStyle(
+                        color: Colors.teal,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.folder),
-                  title: const Text('Favorites'),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FavoriteSongsPage(),));
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.download_done_sharp),
-                  title: const Text('Download'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.playlist_play),
-                  title: const Text('Playlists'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: const Text('About'),
-                  onTap: () {},
-                ),
-              ],
+                  ListTile(
+                    leading: const Icon(Icons.folder),
+                    title: const Text('Favorites'),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const FavoriteSongsPage(),
+                      ));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.download_done_sharp),
+                    title: const Text('Download'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.playlist_play),
+                    title: const Text('Playlists'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Settings'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.info_outline),
+                    title: const Text('About'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      'Log Out',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () {
+                      homeProviderFalse.setLoginOrNot(false);
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Column(
-              children: <Widget>[
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 30, 5, 20),
-                  child: Center(
-                    child: Text(
-                      'Made with ❤️ by Ankit Umredkar',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(fontSize: 12),
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                children: <Widget>[
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(5, 30, 5, 20),
+                    child: Center(
+                      child: Text(
+                        'Made with ❤️ by Ankit Umredkar',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.roboto(fontSize: 12),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      )
-    );
+          ],
+        ));
   }
 }
 
