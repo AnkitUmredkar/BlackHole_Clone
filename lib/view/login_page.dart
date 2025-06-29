@@ -54,6 +54,7 @@ class LoginPage extends StatelessWidget {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   filled: true,
+
                   fillColor: Colors.grey.shade800,
                   prefixIcon: const Icon(Icons.person, color: Colors.tealAccent),
                   focusedBorder: buildOutlineInputBorder(),
